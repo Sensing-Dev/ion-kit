@@ -750,6 +750,7 @@ public:
                 }
 
             } else if (operation_mode_ == OperationMode::Came1USB2) {
+                
 
                 uint32_t latest_cnt = 0;
                 int32_t min_frame_device_idx = 0;
@@ -775,6 +776,36 @@ public:
                 device_idx_ == 0 ?
                 log::trace("All-Popped Frames (USB0, USB1)=({:20}, {:20})", devices_[device_idx_].frame_count_, "") :
                 log::trace("All-Popped Frames (USB0, USB1)=({:20}, {:20})", "", devices_[device_idx_].frame_count_);
+
+                log::trace("Came1USB===========================================");
+                if (latest_cnt == 0xFFFFFFFF){
+                    int32_t tmp_sig = 0;;
+                    memcpy (&tmp_sig, ((char *) arv_buffer_get_data(bufs[device_idx_], nullptr)), sizeof(int32_t));
+                    log::trace("GNDC with framecount     -1:  {} ... let's take it again", tmp_sig);
+
+                    bufs[device_idx_] = arv_stream_timeout_pop_buffer(devices_[device_idx_].stream_, 30 * 1000 * 1000);
+                    if (bufs[device_idx_] == nullptr) {
+                        log::error("pop_buffer(L4-ex) failed due to timeout ({}s)", timeout_us * 1e-6f);
+                        throw ::std::runtime_error("buffer is null");
+                    }
+                    devices_[device_idx_].frame_count_ = frame_count_method_ == FrameCountMethod::TYPESPECIFIC3
+                        ? static_cast<uint32_t>(get_frame_count_from_genDC_descriptor(bufs[device_idx_], devices_[device_idx_]))
+                        : frame_count_method_ == FrameCountMethod::TIMESTAMP
+                        ? static_cast<uint32_t>(arv_buffer_get_timestamp(bufs[device_idx_]) & 0x00000000FFFFFFFF)
+                        : -1;
+                    latest_cnt = devices_[device_idx_].frame_count_;
+                    device_idx_ == 0 ?
+                    log::trace("All-Popped Frames (USB0, USB1)=({:20}, {:20})", devices_[device_idx_].frame_count_, "") :
+                    log::trace("All-Popped Frames (USB0, USB1)=({:20}, {:20})", "", devices_[device_idx_].frame_count_);
+                    tmp_sig = 0;;
+                    memcpy (&tmp_sig, ((char *) arv_buffer_get_data(bufs[device_idx_], nullptr)), sizeof(int32_t));
+                    log::trace("GNDC with framecount     -1:  {}", tmp_sig);
+                }else{
+                    int32_t tmp_sig = 0;;
+                    memcpy (&tmp_sig, ((char *) arv_buffer_get_data(bufs[device_idx_], nullptr)), sizeof(int32_t));                    
+                    log::trace("GNDC with framecount non -1:  {}", tmp_sig);
+                }
+                
 
             int internal_count = 0;
             int max_internal_count = 1000;
