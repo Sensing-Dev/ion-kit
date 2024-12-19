@@ -18,7 +18,7 @@
 #define ION_DYNAMIC_MODULE_EXT ".so"
 #endif
 
-#include "log.h"
+// #include "log.h"
 
 namespace {
 bool has_prefix_and_ext(const std::string& n) {
@@ -61,7 +61,7 @@ class DynamicModule {
              if (essential) {
                  throw std::runtime_error(getErrorString());
              } else {
-                 log::warn("Not found inessential library {} : {}", target, getErrorString());
+                 // log::warn("Not found inessential library {} : {}", target, getErrorString());
              }
          }
      }

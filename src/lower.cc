@@ -1,7 +1,7 @@
 #include <Halide.h>
 
 #include "ion/node.h"
-#include "log.h"
+// #include "log.h"
 #include "lower.h"
 
 namespace ion {
@@ -98,8 +98,8 @@ void determine_and_validate(std::vector<Node>& nodes) {
             try {
                 bb->set_generatorparam_value(p.key(), p.val());
             } catch (const Halide::CompileError& e) {
-                auto msg = fmt::format("BuildingBlock \"{}\" has no parameter \"{}\"", n.name(), p.key());
-                log::error(msg);
+                auto msg = "BuildingBlock  has no parameter ";
+                // log::error(msg);
                 throw std::runtime_error(msg);
             }
         }
@@ -107,7 +107,7 @@ void determine_and_validate(std::vector<Node>& nodes) {
         try {
             bb->build_pipeline();
         } catch (const Halide::CompileError& e) {
-            log::error(e.what());
+            // log::error(e.what());
             throw std::runtime_error(e.what());
         }
 
@@ -119,8 +119,8 @@ void determine_and_validate(std::vector<Node>& nodes) {
             if (is_free(pn)) {
                 const auto& [arginfo, found] = find_ith_input(arginfos, i);
                 if (!found) {
-                    auto msg = fmt::format("BuildingBlock \"{}\" has no input #{}", n.name(), i);
-                    log::error(msg);
+                    auto msg = "BuildingBlock has no input #{}";
+                    // log::error(msg);
                     throw std::runtime_error(msg);
                 }
 
@@ -131,8 +131,8 @@ void determine_and_validate(std::vector<Node>& nodes) {
             const auto& pn_(pn); // This is workaround for Clang-14 (MacOS)
             if (!std::count_if(arginfos.begin(), arginfos.end(),
                                [&](Halide::Internal::AbstractGenerator::ArgInfo arginfo){ return pn_ == arginfo.name && Halide::Internal::ArgInfoDirection::Input == arginfo.dir; })) {
-                auto msg = fmt::format("BuildingBlock \"{}\" has no input \"{}\"", n.name(), pn);
-                log::error(msg);
+                auto msg = "BuildingBlock has no input ";
+                // log::error(msg);
                 throw std::runtime_error(msg);
             }
 
@@ -144,8 +144,8 @@ void determine_and_validate(std::vector<Node>& nodes) {
             const auto& pn_(pn); // This is workaround for Clang-14 (MacOS)
             if (!std::count_if(arginfos.begin(), arginfos.end(),
                                [&](Halide::Internal::AbstractGenerator::ArgInfo arginfo){ return pn_ == arginfo.name && Halide::Internal::ArgInfoDirection::Output == arginfo.dir; })) {
-                auto msg = fmt::format("BuildingBlock \"{}\" has no output \"{}\"", n.name(), pn);
-                log::error(msg);
+                auto msg = "BuildingBlock has no output ";
+                // log::error(msg);
                 throw std::runtime_error(msg);
             }
         }
@@ -166,13 +166,13 @@ std::vector<const void*> generate_arguments_instance(const std::vector<Halide::A
             for (auto arg : port.as_argument()) {
                 auto it = std::find_if(inferred_args.begin(), inferred_args.end(), [arg](const Halide::Argument& inferred_arg) { return inferred_arg.name == arg.name; });
                 if (it == inferred_args.end()) {
-                    log::warn("Argument \"{}\" is not found in the inferred arguements", arg.name);
+                    // log::warn("Argument \"{}\" is not found in the inferred arguements", arg.name);
                     i++;
                     continue;
                 }
 
                 auto idx = it-inferred_args.begin();
-                log::debug("Inserted \"{}\" instance at #{}", arg.name, idx);
+                // log::debug("Inserted \"{}\" instance at #{}", arg.name, idx);
                 instances[idx] = port.as_instance()[i++];
             }
         }
@@ -190,26 +190,13 @@ std::vector<const void*> generate_arguments_instance(const std::vector<Halide::A
         throw std::runtime_error("Failed to determine arguemnt instance");
     }
 
-    if (log::should_log(log::level::debug)) {
-        int i=0;
-        log::debug("Inferred arguments stub");
-        for (auto arg : inferred_args) {
-            log::debug("  #{} name({}) kind({}) dimensions({}) type({})", i++, arg.name, to_string(arg.kind), arg.dimensions, Halide::type_to_c_type(arg.type, false));
-        }
-
-        i=0;
-        log::debug("Generating arguments instance");
-        for (auto instance : instances) {
-            log::debug("  #{} {}", i++, instance);
-        }
-    }
 
     return instances;
 }
 
 Halide::Pipeline lower(Builder builder, std::vector<Node>& nodes, bool implicit_output) {
 
-    log::info("Start building pipeline");
+    // log::info("Start building pipeline");
 
     determine_and_validate(nodes);
 
@@ -245,8 +232,8 @@ Halide::Pipeline lower(Builder builder, std::vector<Node>& nodes, bool implicit_
             // Find arginfo
             auto it = std::find_if(arginfos.begin(), arginfos.end(), [&pn=pn](const ArgInfo& arginfo) { return arginfo.name == pn; });
             if (it == arginfos.end()) {
-                auto msg = fmt::format("Argument {} is not defined in node {}", pn, n.name());
-                log::error(msg);
+                auto msg = "Argument is not defined in node ";
+                // log::error(msg);
                 throw std::runtime_error(msg);
             }
             const auto& arginfo = *it;
@@ -275,7 +262,7 @@ Halide::Pipeline lower(Builder builder, std::vector<Node>& nodes, bool implicit_
             } else {
 
                 if (arginfo.name != pn) {
-                    log::warn("Expect({}), Actual({})", arginfo.name, pn);
+                    // log::warn("Expect({}), Actual({})", arginfo.name, pn);
                 }
 
                 if (arginfo.kind == Halide::Internal::ArgInfoKind::Scalar) {
@@ -343,8 +330,8 @@ Halide::Pipeline lower(Builder builder, std::vector<Node>& nodes, bool implicit_
                 const auto& pred_arginfos(pred_bb->arginfos());
                 if (!std::count_if(pred_arginfos.begin(), pred_arginfos.end(),
                                    [&](Halide::Internal::AbstractGenerator::ArgInfo arginfo){ return port_.pred_name() == arginfo.name && Halide::Internal::ArgInfoDirection::Output == arginfo.dir; })) {
-                    auto msg = fmt::format("BuildingBlock \"{}\" has no output \"{}\"", pred_bb->name(), port.pred_name());
-                    log::error(msg);
+                    auto msg = "BuildingBlock has no output ";
+                    // log::error(msg);
                     throw std::runtime_error(msg);
                 }
 

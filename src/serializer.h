@@ -8,7 +8,7 @@
 
 #include "json/json.hpp"
 
-#include "log.h"
+// #include "log.h"
 
 namespace nlohmann {
 template <>
@@ -95,7 +95,7 @@ struct adl_serializer<ion::Node> {
          impl->ports = j["ports"].get<std::vector<ion::Port>>();
          auto bb(Halide::Internal::GeneratorRegistry::create(impl->name, Halide::GeneratorContext(impl->target)));
          if (!bb) {
-             ion::log::error("BuildingBlock {} is not found", impl->name);
+             // ion::log::error("BuildingBlock {} is not found", impl->name);
              throw std::runtime_error("Failed to create building block object");
          }
          impl->arginfos = bb->arginfos();

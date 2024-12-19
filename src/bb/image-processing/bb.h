@@ -1,7 +1,7 @@
 #ifndef ION_BB_IMAGE_PROCESSING_BB_H
 #define ION_BB_IMAGE_PROCESSING_BB_H
 
-#include <ion/ion.h>
+// #include <ion/ion.h>
 
 namespace ion {
 namespace bb {
@@ -74,7 +74,7 @@ public:
             return (average1 - average0) * (average1 - average0);
         }
         default:
-            log::error("Unknown ColorDifference method");
+            //log::error("Unknown ColorDifference method");
             throw std::runtime_error("Unknown ColorDifference method");
         }
 
@@ -108,7 +108,7 @@ public:
         case Method::Y:
             return r * 0.2126f + g * 0.7152f + b * 0.0722f;  // BT.709
         default:
-            log::error("Unknown Luminance method");
+            //log::error("Unknown Luminance method");
             throw std::runtime_error("Unknown Luminance method");
         }
 
@@ -136,7 +136,7 @@ public:
 
     static Halide::Func calc(Method method, Halide::Func f, Halide::Expr width, Halide::Expr height) {
         if (f.dimensions() < 2) {
-            log::error("Dimension must be more than two for BoundaryCondition");
+            //log::error("Dimension must be more than two for BoundaryCondition");
             throw std::runtime_error("Dimension must be more than two for BoundaryCondition");
         }
 
@@ -156,7 +156,7 @@ public:
         case Method::Zero:
             return Halide::BoundaryConditions::constant_exterior(f, 0, region);
         default:
-            log::error("Unknown BoundaryCondition method");
+            //log::error("Unknown BoundaryCondition method");
             throw std::runtime_error("Unknown BoundaryCondition method");
         }
 
@@ -310,7 +310,7 @@ public:
                  input_wrapper(x * 2 + 1, y * 2)});
             break;
         default:
-            log::error("Unknown BayerMap method");
+            //log::error("Unknown BayerMap method");
             throw std::runtime_error("Unknown BayerMap method");
         }
     }

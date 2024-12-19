@@ -10,7 +10,7 @@
 #include "uuid/sole.hpp"
 
 #include "dynamic_module.h"
-#include "log.h"
+// #include "log.h"
 #include "lower.h"
 #include "metadata.h"
 #include "serializer.h"
@@ -142,7 +142,7 @@ void Builder::compile(const std::string& function_name, const CompileOption& opt
     // Build pipeline and module first
     Pipeline p = lower(*this, impl_->nodes, true);
     if (!p.defined()) {
-        log::warn("This pipeline doesn't produce any outputs. Please bind a buffer with output port.");
+        // log::warn("This pipeline doesn't produce any outputs. Please bind a buffer with output port.");
         return;
     }
 
@@ -191,7 +191,7 @@ void Builder::run(const ion::PortMap&) {
      if (!impl_->pipeline.defined()) {
         impl_->pipeline = lower(*this, impl_->nodes, false);
         if (!impl_->pipeline.defined()) {
-            log::warn("This pipeline doesn't produce any outputs. Please bind a buffer with output port.");
+            // log::warn("This pipeline doesn't produce any outputs. Please bind a buffer with output port.");
             return;
         }
     }
@@ -234,7 +234,7 @@ std::vector<ArgInfo> Builder::bb_arginfos(const std::string& name) {
     auto generator_names = Halide::Internal::GeneratorRegistry::enumerate();
 
     if (std::find(generator_names.begin(), generator_names.end(), name) == generator_names.end()) {
-        throw std::runtime_error(fmt::format("Cannot find generator : {}", name));
+        throw std::runtime_error("Cannot find generator");
     }
 
     auto bb(Halide::Internal::GeneratorRegistry::create(name, Halide::GeneratorContext(get_host_target())));
@@ -245,7 +245,7 @@ std::vector<ArgInfo> Builder::bb_arginfos(const std::string& name) {
     //         bb->set_generatorparam_value(p.key(), p.val());
     //     } catch (const Halide::CompileError& e) {
     //         auto msg = fmt::format("BuildingBlock \"{}\" has no parameter \"{}\"", n.name(), p.key());
-    //         log::error(msg);
+    //         // log::error(msg);
     //         throw std::runtime_error(msg);
     //     }
     // }
@@ -253,7 +253,7 @@ std::vector<ArgInfo> Builder::bb_arginfos(const std::string& name) {
     try {
         bb->build_pipeline();
     } catch (const Halide::CompileError& e) {
-        log::error(e.what());
+        // log::error(e.what());
         throw std::runtime_error(e.what());
     }
 
@@ -289,7 +289,7 @@ const std::map<std::string, Halide::JITExtern>& Builder::jit_externs() const {
 }
 
 void Builder::register_disposer(Impl *impl, const std::string& bb_id, const std::string& disposer_symbol) {
-    log::info("Builder::register_disposer");
+    // log::info("Builder::register_disposer");
     for (const auto& kv : impl->bb_modules) {
         const auto& dm(kv.second);
         auto disposer_ptr = dm->get_symbol<void (*)(const char*)>(disposer_symbol);

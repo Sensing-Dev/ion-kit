@@ -5,7 +5,7 @@
 
 #include "ion/export.h"
 
-#include "log.h"
+// #include "log.h"
 #include "json/json.hpp"
 
 #include "rt_dnndk.h"
@@ -61,19 +61,19 @@ extern "C" ION_EXPORT int ion_bb_dnn_generic_object_detection(halide_buffer_t *i
 
         if (is_tfl_available()) {
             // EdgeTPU
-            ion::log::info("TFlite runtime is available");
+            //ion::log::info("TFlite runtime is available");
             return object_detection_tfl(in, model_root_url, cache_root, out);
         } else if (dnndk_enable && dnndk::is_dnndk_available()) {
             // DPU (FPGA)
-            ion::log::info("DNNDK runtime is available");
+            //ion::log::info("DNNDK runtime is available");
             return dnndk::object_detection(in, model_root_url, cache_root, out);
         } else if (is_ort_available()) {
             // CPU, GPU (CUDA)
-            ion::log::info("ONNX runtime is available");
+            //ion::log::info("ONNX runtime is available");
             std::string session_id(reinterpret_cast<const char *>(session_id_buf->host));
             return object_detection_ort(in, session_id, model_root_url, cache_root, cuda_enable, out);
         } else {
-            ion::log::error("No available runtime");
+            //ion::log::error("No available runtime");
             return -1;
         }
 

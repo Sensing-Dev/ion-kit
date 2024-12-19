@@ -22,7 +22,7 @@
 #include <HalideBuffer.h>
 #include "halide_image_io.h"
 
-#include "log.h"
+// #include "log.h"
 
 #include "rt_common.h"
 #include "httplib.h"
@@ -210,19 +210,19 @@ public:
         const char *dev_name = dev_name_str.c_str();
         struct stat st;
         if (-1 == stat(dev_name, &st)) {
-            log::warn("Fallback to simulation mode: Could not find {}", dev_name);
+            // log::warn("Fallback to simulation mode: Could not find {}", dev_name);
             sim_mode_ = true;;
             return;
         }
         if (!S_ISCHR(st.st_mode)) {
-            log::warn("Fallback to simulation mode: {} is not proper device", dev_name);
+            // log::warn("Fallback to simulation mode: {} is not proper device", dev_name);
             sim_mode_ = true;;
             return;
         }
 
         fd_ = open(dev_name, O_RDWR | O_NONBLOCK, 0);
         if (-1 == fd_) {
-            log::warn("Fallback to simulation mode: Cannot open {}: {}, {}", dev_name, errno, strerror(errno));
+            // log::warn("Fallback to simulation mode: Cannot open {}: {}, {}", dev_name, errno, strerror(errno));
             sim_mode_ = true;;
             return;
         }
@@ -230,22 +230,22 @@ public:
         struct v4l2_capability cap;
         if (-1 == xioctl(fd_, VIDIOC_QUERYCAP, &cap)) {
             if (EINVAL == errno) {
-                log::warn("Fallback to simulation mode: {} is not V4L2 device", dev_name);
+                // log::warn("Fallback to simulation mode: {} is not V4L2 device", dev_name);
                 sim_mode_ = true;;
                 return;
             } else {
-                log::warn("Fallback to simulation mode: {} error {}, {}", "VIDIOC_QUERYCAP", errno, strerror(errno));
+                // log::warn("Fallback to simulation mode: {} error {}, {}", "VIDIOC_QUERYCAP", errno, strerror(errno));
                 sim_mode_ = true;;
                 return;
             }
         }
         if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE)) {
-            log::warn("Fallback to simulation mode: {} is not video capture device", dev_name);
+            // log::warn("Fallback to simulation mode: {} is not video capture device", dev_name);
             sim_mode_ = true;;
             return;
         }
         if (!(cap.capabilities & V4L2_CAP_STREAMING)) {
-            log::warn("Fallback to simulation mode: {} s does not support streaming i/o", dev_name);
+            // log::warn("Fallback to simulation mode: {} s does not support streaming i/o", dev_name);
             sim_mode_ = true;;
             return;
         }
@@ -264,7 +264,7 @@ public:
             fmtdesc.index++;
         }
         if (!supported) {
-            log::warn("Fallback to simulation mode: {} does not support desired pixel format", dev_name);
+            // log::warn("Fallback to simulation mode: {} does not support desired pixel format", dev_name);
             sim_mode_ = true;;
             return;
         }
@@ -280,12 +280,12 @@ public:
                 }},
         };
         if (-1 == xioctl(fd_, VIDIOC_S_FMT, &fmt)) {
-            log::warn("Fallback to simulation mode: {} error {}, {}", "VIDIOC_S_FMT", errno, strerror(errno));
+            // log::warn("Fallback to simulation mode: {} error {}, {}", "VIDIOC_S_FMT", errno, strerror(errno));
             sim_mode_ = true;;
             return;
         }
         if (width != fmt.fmt.pix.width || height != fmt.fmt.pix.height) {
-            log::warn("Fallback to simulation mode: {} does not support desired resolution", dev_name);
+            // log::warn("Fallback to simulation mode: {} does not support desired resolution", dev_name);
             sim_mode_ = true;;
             return;
         }
@@ -296,14 +296,14 @@ public:
 
         };
         if (-1 == xioctl(fd_, VIDIOC_G_PARM, &strmp)) {
-            log::warn("Fallback to simulation mode: {} error {}, {}", "VIDIOC_G_PARM", errno, strerror(errno));
+            // log::warn("Fallback to simulation mode: {} error {}, {}", "VIDIOC_G_PARM", errno, strerror(errno));
             sim_mode_ = true;;
             return;
         }
         strmp.parm.capture.timeperframe.numerator = 1;
         strmp.parm.capture.timeperframe.denominator = fps;
         if (-1 == xioctl(fd_, VIDIOC_S_PARM, &strmp)) {
-            log::warn("Fallback to simulation mode: {} error {}, {}", "VIDIOC_S_PARM", errno, strerror(errno));
+            // log::warn("Fallback to simulation mode: {} error {}, {}", "VIDIOC_S_PARM", errno, strerror(errno));
             sim_mode_ = true;;
             return;
         }
@@ -318,11 +318,11 @@ public:
 
         if (-1 == xioctl(fd_, VIDIOC_REQBUFS, &req)) {
             if (EINVAL == errno) {
-                log::warn("Fallback to simulation mode: {} does not support memory mapping", dev_name);
+                // log::warn("Fallback to simulation mode: {} does not support memory mapping", dev_name);
                 sim_mode_ = true;;
                 return;
             } else {
-                log::warn("Fallback to simulation mode: {} error {}, {}", "VIDIOC_REQBUFS", errno, strerror(errno));
+                // log::warn("Fallback to simulation mode: {} error {}, {}", "VIDIOC_REQBUFS", errno, strerror(errno));
                 sim_mode_ = true;;
                 return;
             }
@@ -351,7 +351,7 @@ public:
 
             /* enqueue an empty (capturing) or filled (output) buffer in the driver's incoming queue */
             if (-1 == xioctl(fd_, VIDIOC_QBUF, &buf)) {
-                log::warn("Fallback to simulation mode: {} error {}, {}", "VIDIOC_QBUF", errno, strerror(errno));
+                // log::warn("Fallback to simulation mode: {} error {}, {}", "VIDIOC_QBUF", errno, strerror(errno));
                 sim_mode_ = true;;
                 return;
             }
@@ -365,7 +365,7 @@ public:
         enum v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         /* Start streaming I/O */
         if (-1 == xioctl(fd_, VIDIOC_STREAMON, &type)) {
-            log::warn("Fallback to simulation mode: {} error {}, {}\n", "VIDIOC_STREAMON", errno, strerror(errno));
+            // log::warn("Fallback to simulation mode: {} error {}, {}\n", "VIDIOC_STREAMON", errno, strerror(errno));
             sim_mode_ = true;;
             return;
         }
@@ -375,7 +375,7 @@ public:
         //
         efd_ = epoll_create1(0);
         if (-1 == efd_) {
-            log::warn("Fallback to simulation mode: {} error {}, {}", "epoll_create1", errno, strerror(errno));
+            // log::warn("Fallback to simulation mode: {} error {}, {}", "epoll_create1", errno, strerror(errno));
             sim_mode_ = true;;
             return;
         }
@@ -385,7 +385,7 @@ public:
         event.data.fd = fd_;
 
         if (-1 == epoll_ctl(efd_, EPOLL_CTL_ADD, fd_, &event)) {
-            log::warn("Fallback to simulation mode: {} error {}, {}", "epoll_ctl", errno, strerror(errno));
+            // log::warn("Fallback to simulation mode: {} error {}, {}", "epoll_ctl", errno, strerror(errno));
             sim_mode_ = true;;
             return;
         }
@@ -599,14 +599,14 @@ public:
 
         /* queue-in buffer */
         if (-1 == xioctl(fd_, VIDIOC_QBUF, &next_buffer_)) {
-            log::warn("Fallback to simulation mode: {} error {}, {}", "VIDIOC_QBUF", errno, strerror(errno));
+            // log::warn("Fallback to simulation mode: {} error {}, {}", "VIDIOC_QBUF", errno, strerror(errno));
             sim_mode_ = true;
             return;
         }
 
         epoll_event event;
         if (-1 == epoll_wait(efd_, &event, 1, -1)) {
-            log::warn("Fallback to simulation mode: {} error {}, {}", "epoll_wait", errno, strerror(errno));
+            // log::warn("Fallback to simulation mode: {} error {}, {}", "epoll_wait", errno, strerror(errno));
             sim_mode_ = true;
             return;
         }
@@ -623,7 +623,7 @@ public:
             if (EAGAIN == errno) {
                 return;
             } else {
-                log::warn("Fallback to simulation mode: {} error {}, {}", "VIDIOC_DQBUF", errno, strerror(errno));
+                // log::warn("Fallback to simulation mode: {} error {}, {}", "VIDIOC_DQBUF", errno, strerror(errno));
                 sim_mode_ = true;
                 return;
             }
@@ -700,10 +700,10 @@ extern "C" ION_EXPORT int ion_bb_image_io_v4l2(
         return 0;
 
     } catch (const std::exception &e) {
-        ion::log::error("Exception was thrown: {}", e.what());
+        // ion::// log::error("Exception was thrown: {}", e.what());
         return 1;
     } catch (...) {
-        ion::log::error("Unknown exception was thrown");
+        // ion::// log::error("Unknown exception was thrown");
         return 1;
     }
 }
@@ -726,10 +726,10 @@ extern "C" int ION_EXPORT ion_bb_image_io_camera(int32_t instance_id, int32_t in
         return 0;
 
     } catch (const std::exception &e) {
-        ion::log::error("Exception was thrown: {}", e.what());
+        // ion::// log::error("Exception was thrown: {}", e.what());
         return 1;
     } catch (...) {
-        ion::log::error("Unknown exception was thrown");
+        // ion::// log::error("Unknown exception was thrown");
         return 1;
     }
 }
