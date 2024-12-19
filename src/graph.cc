@@ -1,7 +1,7 @@
 #include "ion/graph.h"
 #include "ion/builder.h"
 
-#include "log.h"
+// #include "log.h"
 #include "lower.h"
 #include "uuid/sole.hpp"
 namespace ion {
@@ -59,7 +59,7 @@ void Graph::run()
      if (!impl_->pipeline.defined()) {
         impl_->pipeline = lower(impl_->builder, impl_->nodes, false);
         if (!impl_->pipeline.defined()) {
-            log::warn("This pipeline doesn't produce any outputs. Please bind a buffer with output port.");
+            // log::warn("This pipeline doesn't produce any outputs. Please bind a buffer with output port.");
             return;
         }
     }

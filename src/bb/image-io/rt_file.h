@@ -12,7 +12,7 @@
 
 #include "json/json.hpp"
 
-#include "log.h"
+// #include "log.h"
 
 #include "rt_common.h"
 #include "httplib.h"
@@ -131,7 +131,7 @@ public:
 
     ~Writer() {
         if (!disposed_){
-            ion::log::debug("Trying to call dispose from distructor since disposed_ is {}", disposed_);
+            // ion::log::debug("Trying to call dispose from distructor since disposed_ is {}", disposed_);
             dispose();
         }
 
@@ -183,7 +183,7 @@ public:
     }
 
     void dispose() {
-         ion::log::debug("Writer::dispose() :: is called");
+        //  ion::log::debug("Writer::dispose() :: is called");
         // Already disposed if thread is not joinable
         if (thread_ && thread_->joinable()) {
             keep_running_ = false;
@@ -191,13 +191,13 @@ public:
             thread_->join();
             thread_ = nullptr;
         }
-         ion::log::debug("Writer::dispose() :: is finished");
+        //  ion::log::debug("Writer::dispose() :: is finished");
          disposed_ = true;
     }
 
 
     static void release_instance(const char * id) {
-        ion::log::debug("Writer::release_instance() :: is called");
+        // ion::log::debug("Writer::release_instance() :: is called");
         if (instances.count(id) == 0) {
              return;
         }
@@ -205,7 +205,7 @@ public:
         Writer & writer = *instances[id].get();
         writer.dispose();
         instances.erase(id);
-        ion::log::debug("Writer::release_instance() :: Instance is delete");
+        // ion::log::debug("Writer::release_instance() :: Instance is delete");
 
        }
 

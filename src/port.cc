@@ -1,7 +1,7 @@
 #include "ion/port.h"
 
 #include "uuid/sole.hpp"
-#include "log.h"
+// #include "log.h"
 
 namespace ion {
 
@@ -19,11 +19,11 @@ Port::Impl::Impl(const NodeID & nid, const std::string& pn, const Halide::Type& 
 void Port::determine_succ(const NodeID& nid, const std::string& old_pn, const std::string& new_pn) {
     auto it = std::find(impl_->succ_chans.begin(), impl_->succ_chans.end(), Channel{nid, old_pn});
     if (it == impl_->succ_chans.end()) {
-        log::error("fixme");
+        // log::error("fixme");
         throw std::runtime_error("fixme");
     }
 
-    log::debug("Determine free port {} as {} on Node {}", old_pn, new_pn, nid.value());
+    // log::debug("Determine free port {} as {} on Node {}", old_pn, new_pn, nid.value());
     impl_->succ_chans.erase(it);
     impl_->succ_chans.insert(Channel{nid, new_pn});
 }
@@ -37,7 +37,7 @@ std::tuple<std::shared_ptr<Port::Impl>, bool> Port::find_impl(const std::string&
         impls[id] = std::make_shared<Impl>();
         found = false;
     }
-    log::debug("Port {} is {}found", id, found ? "" : "not ");
+    // log::debug("Port {} is {}found", id, found ? "" : "not ");
     return std::make_tuple(impls[id], found);
 }
 

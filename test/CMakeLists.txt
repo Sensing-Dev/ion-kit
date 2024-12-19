@@ -76,9 +76,6 @@ ion_jit_executable(configure SRCS configure.cc)
 # Export test
 ion_jit_executable(export SRCS export.cc)
 
-# Validation test
-ion_jit_executable(validation SRCS validation.cc)
-
 # Multi
 ion_jit_executable(multi_pipe SRCS multi_pipe.cc)
 

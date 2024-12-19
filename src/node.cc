@@ -1,6 +1,6 @@
 #include "ion/node.h"
 
-#include "log.h"
+// #include "log.h"
 
 namespace ion {
 
@@ -10,7 +10,7 @@ Node::Impl::Impl(const NodeID& id_, const std::string& name_, const Halide::Targ
 {
     auto bb(Halide::Internal::GeneratorRegistry::create(name_, Halide::GeneratorContext(target_)));
     if (!bb) {
-        log::error("BuildingBlock {} is not found", name_);
+        // log::error("BuildingBlock {} is not found", name_);
         throw std::runtime_error("Failed to create building block object");
     }
 
@@ -22,7 +22,7 @@ Node::Impl::Impl(const NodeID& id_, const std::string& name_, const Halide::Targ
 {
     auto bb(Halide::Internal::GeneratorRegistry::create(name_, Halide::GeneratorContext(target_)));
     if (!bb) {
-        log::error("BuildingBlock {} is not found", name_);
+        // log::error("BuildingBlock {} is not found", name_);
         throw std::runtime_error("Failed to create building block object");
     }
 
@@ -44,7 +44,7 @@ void Node::set_iport(const std::vector<Port>& ports) {
         // }
 
         // if (i >= ports.size()) {
-        //     log::error("Port {} is out of range", i);
+        //     // log::error("Port {} is out of range", i);
         //     throw std::runtime_error("Failed to validate input port");
         // }
 
@@ -94,8 +94,8 @@ Port Node::iport(const std::string& pn) {
         }
     }
 
-    auto msg = fmt::format("BuildingBlock \"{}\" has no input \"{}\"", name(), pn);
-    log::error(msg);
+    auto msg = "BuildingBlock has no input ";
+    // log::error(msg);
     throw std::runtime_error(msg);
 }
 
@@ -124,7 +124,7 @@ Port Node::oport(const std::string& pn) {
     // }
 
     // auto msg = fmt::format("BuildingBlock \"{}\" has no output \"{}\"", name(), pn);
-    // log::error(msg);
+    // // log::error(msg);
     // throw std::runtime_error(msg);
 }
 
